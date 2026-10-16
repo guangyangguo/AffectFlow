@@ -3,6 +3,8 @@ __pycache__/
 *.pyc
 .env
 .uploads/
+models/
+data/
 data/*.db
 data/*.sqlite
 data/*.sqlite3
