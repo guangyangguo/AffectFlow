@@ -1,2 +1,2 @@
-"""MindBridge engineering harness package."""
+"""Affectflow engineering harness package."""
 

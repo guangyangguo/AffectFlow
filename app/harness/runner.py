@@ -1,10 +1,10 @@
-"""MindBridge 集成测试 harness。
+"""Affectflow 集成测试 harness。
 
 在隔离的 SQLite、mock AI 和内存记忆环境中执行风险、Agent 路由、Skill、RAG、
 API 及工具队列测试，用预设断言检查核心业务链路是否符合预期。
 
 测试命令（在项目根目录执行）：
-    conda activate mindbridge
+    conda activate affectflow
     python -m app.harness.runner --suite all
 
 也可以只运行一个套件，例如：
@@ -90,7 +90,7 @@ class InMemoryShortTermMemoryStore:
 
 
 def main(argv: list[str] | None = None) -> int:
-    parser = argparse.ArgumentParser(description="Run MindBridge engineering harness checks.")
+    parser = argparse.ArgumentParser(description="Run Affectflow engineering harness checks.")
     parser.add_argument(
         "--suite",
         action="append",
@@ -125,7 +125,7 @@ def configure_environment() -> None:
     root = Path(__file__).resolve().parents[2]
     target_dir = root / "target" / "harness"
     target_dir.mkdir(parents=True, exist_ok=True)
-    db_path = target_dir / "mindbridge-harness.sqlite3"
+    db_path = target_dir / "affectflow-harness.sqlite3"
     for suffix in ["", "-wal", "-shm"]:
         candidate = Path(f"{db_path}{suffix}")
         if candidate.exists():
@@ -144,7 +144,7 @@ def configure_environment() -> None:
     os.environ["TOOL_QUEUE_ENABLED"] = "false"
     os.environ["ALERT_EMAIL_DELIVERY_MODE"] = "log"
     os.environ["LANGFUSE_ENABLED"] = "false"
-    os.environ["EXCEL_PATH"] = str((target_dir / "mindbridge-risk-ledger.xlsx").as_posix())
+    os.environ["EXCEL_PATH"] = str((target_dir / "affectflow-risk-ledger.xlsx").as_posix())
     os.environ["RAG_EVAL_OUTPUT"] = str((target_dir / "rag-eval-report.json").as_posix())
 
 
@@ -308,7 +308,7 @@ def run_risk_safety_harness(context: HarnessContext) -> dict:
 
 
 def run_agent_routing_harness(context: HarnessContext) -> dict:
-    from app.agents.harness import MindBridgeAgentHarness
+    from app.agents.harness import AffectflowAgentHarness
     from app.core.enums import IntentType, RiskLevel
     from app.models.entities import ChatSession, UserAccount
     from app.schemas.dtos import ChatRequest
@@ -345,7 +345,7 @@ def run_agent_routing_harness(context: HarnessContext) -> dict:
             db.add(session)
             db.commit()
             db.refresh(session)
-            result = MindBridgeAgentHarness(db, context.settings).run(
+            result = AffectflowAgentHarness(db, context.settings).run(
                 user,
                 ChatRequest(message=case["message"], sessionId=session.public_id),
             )
@@ -370,7 +370,7 @@ def run_agent_routing_harness(context: HarnessContext) -> dict:
 def run_standard_skills_harness(context: HarnessContext) -> dict:
     from app.core.enums import EmotionLabel, IntentType, RiskLevel
     from app.models.entities import PsychologicalReport, UserAccount
-    from app.services.skills import MindBridgeSkillLibrary
+    from app.services.skills import AffectflowSkillLibrary
 
     expected = {
         "supportive_response_baseline",
@@ -381,17 +381,17 @@ def run_standard_skills_harness(context: HarnessContext) -> dict:
         "referral_resource_guidance",
         "counselor_handoff_summary",
     }
-    skills = MindBridgeSkillLibrary.list_skills()
+    skills = AffectflowSkillLibrary.list_skills()
     names = {skill.name for skill in skills}
     missing = sorted(expected - names)
     expect(not missing, f"missing standard skills: {missing}")
 
-    statuses = MindBridgeSkillLibrary.status_items()
+    statuses = AffectflowSkillLibrary.status_items()
     failed = [item for item in statuses if item["status"] != "READY"]
     expect(not failed, f"standard skill load failures: {failed}")
     expect(all(_is_skill_path(item["path"]) for item in statuses), "skill status did not expose SKILL.md paths")
 
-    selected_names = MindBridgeSkillLibrary.response_skill_names(
+    selected_names = AffectflowSkillLibrary.response_skill_names(
         IntentType.CONSULT,
         RiskLevel.LOW,
         "我最近焦虑、失眠，考试压力也很大。",
@@ -405,14 +405,14 @@ def run_standard_skills_harness(context: HarnessContext) -> dict:
     ]:
         expect(name in selected_names, f"consult response did not select {name}")
 
-    context_text = MindBridgeSkillLibrary.response_skill_context(
+    context_text = AffectflowSkillLibrary.response_skill_context(
         IntentType.CONSULT,
         RiskLevel.LOW,
         "我最近焦虑、失眠，考试压力也很大。",
     )
     expect("应用 skill: anxiety_grounding_support" in context_text, "response context did not include standard skill body")
 
-    high_risk_names = MindBridgeSkillLibrary.response_skill_names(
+    high_risk_names = AffectflowSkillLibrary.response_skill_names(
         IntentType.RISK,
         RiskLevel.HIGH,
         "我不想活了。",
@@ -438,7 +438,7 @@ def run_standard_skills_harness(context: HarnessContext) -> dict:
         password_hash="unused",
         roles_csv="ROLE_USER",
     )
-    handoff = MindBridgeSkillLibrary.counselor_handoff_summary(report, user)
+    handoff = AffectflowSkillLibrary.counselor_handoff_summary(report, user)
     for term in ["应用 skill: counselor_handoff_summary", "报告ID：7", "测试学生 (student)", "立即跟进"]:
         expect(term in handoff, f"handoff summary missing {term}")
 
@@ -706,7 +706,7 @@ def write_report(context: HarnessContext, results: list[CheckResult]) -> dict:
 
 
 def print_report(report: dict) -> None:
-    print("MindBridge Engineering Harness")
+    print("Affectflow Engineering Harness")
     print(f"Report: {report['reportPath']}")
     print("")
     for result in report["results"]:

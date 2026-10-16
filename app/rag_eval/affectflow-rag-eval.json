@@ -259,7 +259,7 @@
   },
   {
     "id": "support-calm-practical",
-    "question": "MindBridge 为什么要提供平静、非评判、可执行的陪伴建议？",
+    "question": "Affectflow 为什么要提供平静、非评判、可执行的陪伴建议？",
     "expectedSources": ["campus-mental-health.md"],
     "expectedTerms": ["supportive", "calm", "non-judgmental", "可执行"]
   },
@@ -301,7 +301,7 @@
   },
   {
     "id": "boundary-not-replace-counselor",
-    "question": "MindBridge 能不能替代学校心理咨询师？",
+    "question": "Affectflow 能不能替代学校心理咨询师？",
     "expectedSources": ["campus-mental-health.md"],
     "expectedTerms": ["must not replace", "professional counselor", "不能替代"]
   },
@@ -325,7 +325,7 @@
   },
   {
     "id": "support-campus-assistant-role",
-    "question": "MindBridge 在校园心理健康场景里的角色是什么？",
+    "question": "Affectflow 在校园心理健康场景里的角色是什么？",
     "expectedSources": ["campus-mental-health.md"],
     "expectedTerms": ["supportive", "campus mental-health assistant", "陪伴建议"]
   },

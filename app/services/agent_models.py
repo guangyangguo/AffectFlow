@@ -71,7 +71,7 @@ class AgentModelRegistry:
         if provider == "openai":
             return getattr(self.settings, "openai_model", "gpt-4o-mini")
         if provider == "ollama":
-            return getattr(self.settings, "ollama_model", "mindbridge-qwen2.5-7b-ft:latest")
+            return getattr(self.settings, "ollama_model", "affectflow-qwen2.5-7b-ft:latest")
         return "mock"
 
 

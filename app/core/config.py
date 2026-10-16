@@ -1,4 +1,4 @@
-"""集中定义 MindBridge 的环境变量配置和默认运行参数。"""
+"""集中定义 Affectflow 的环境变量配置和默认运行参数。"""
 
 from functools import lru_cache
 from pathlib import Path
@@ -28,10 +28,10 @@ class Settings(BaseSettings):
     ai_temperature: float = 0.35
     ai_max_tokens: int = 2048
     ollama_base_url: str = "http://localhost:11434"
-    ollama_model: str = "mindbridge-qwen2.5-7b-ft:latest"
-    finetuned_model_name: str = "mindbridge-qwen2.5-7b-ft:latest"
-    finetuned_model_dir: str = "models/mindbridge-qwen2.5-7b-ft"
-    finetuned_model_file: str = "mindbridge-qwen2.5-7b-ft-q4_k_m.gguf"
+    ollama_model: str = "affectflow-qwen2.5-7b-ft:latest"
+    finetuned_model_name: str = "affectflow-qwen2.5-7b-ft:latest"
+    finetuned_model_dir: str = "models/affectflow-qwen2.5-7b-ft"
+    finetuned_model_file: str = "affectflow-qwen2.5-7b-ft-q4_k_m.gguf"
     openai_base_url: str = "https://api.openai.com/v1"
     openai_api_key: str = ""
     openai_model: str = "gpt-4o-mini"
@@ -44,7 +44,7 @@ class Settings(BaseSettings):
     langfuse_base_url: str = "https://cloud.langfuse.com"
     langfuse_tracing_environment: str = "development"
     langfuse_sample_rate: float = 1.0
-    database_url: str = "mysql+pymysql://mindbridge:mindbridge@127.0.0.1:3306/mindbridge?charset=utf8mb4"
+    database_url: str = "mysql+pymysql://affectflow:affectflow@127.0.0.1:3306/affectflow?charset=utf8mb4"
     chat_history_limit: int = 10
     knowledge_top_k: int = 4
     knowledge_candidate_k: int = 16
@@ -57,15 +57,15 @@ class Settings(BaseSettings):
     knowledge_vector_required: bool = False
     chroma_persist_dir: str = "data/chroma"
     chroma_url: str = "http://127.0.0.1:8000"
-    chroma_collection_name: str = "mindbridge_knowledge"
+    chroma_collection_name: str = "affectflow_knowledge"
     chroma_snapshot_dir: str = "data/chroma-snapshots"
     chroma_snapshot_keep: int = 5
     embedding_timeout_seconds: float = 30.0
-    rag_eval_dataset: str = "app/rag_eval/mindbridge-rag-eval.json"
+    rag_eval_dataset: str = "app/rag_eval/affectflow-rag-eval.json"
     rag_eval_output: str = "target/rag-eval-report.json"
     rag_eval_enabled: bool = False
     rag_eval_exit_after_run: bool = False
-    excel_path: str = "data/mindbridge-risk-ledger.xlsx"
+    excel_path: str = "data/affectflow-risk-ledger.xlsx"
     redis_url: str = "redis://127.0.0.1:6379/0"
     redis_memory_ttl_seconds: int = 86400
     redis_memory_max_messages: int = 40
@@ -83,7 +83,7 @@ class Settings(BaseSettings):
     alert_email_delivery_mode: str = "log"
     alert_email_from: str = ""
     alert_email_to: str = ""
-    alert_email_subject_prefix: str = "[MindBridge 高风险预警]"
+    alert_email_subject_prefix: str = "[Affectflow 高风险预警]"
     tool_queue_enabled: bool = True
     tool_queue_poll_interval_seconds: float = 1.0
     tool_queue_batch_size: int = 10

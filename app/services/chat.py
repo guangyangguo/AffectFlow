@@ -13,7 +13,7 @@ import logging
 from sqlalchemy.orm import Session
 
 from app.agents.events import AgentEvent, AgentEventType
-from app.agents.harness import MindBridgeAgentHarness
+from app.agents.harness import AffectflowAgentHarness
 from app.core.config import Settings
 from app.models.entities import UserAccount
 from app.schemas.dtos import ChatRequest, ChatStreamEvent
@@ -29,12 +29,12 @@ class ChatService:
         self.db = db
         self.settings = settings
         self.ai = AiClient(settings)
-        self.agent_harness = MindBridgeAgentHarness(db, settings)
+        self.agent_harness = AffectflowAgentHarness(db, settings)
         self.telemetry = LangfuseService(settings)
 
     async def stream_chat(self, user: UserAccount, request: ChatRequest):
         with self.telemetry.observation(
-            "mindbridge.chat",
+            "affectflow.chat",
             as_type="agent",
             input={"message": self.agent_harness.privacy.sanitize(request.message)},
             metadata={"user_id": str(user.id), "session_id": request.sessionId or "new"},

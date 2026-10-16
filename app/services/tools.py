@@ -19,7 +19,7 @@ from sqlalchemy.orm import Session
 from app.core.config import Settings
 from app.core.enums import RiskCaseStatus, ToolStatus
 from app.models.entities import AlertRecord, CaseNote, ExcelRecord, PsychologicalReport, RiskCase, UserAccount
-from app.services.skills import MindBridgeSkillLibrary
+from app.services.skills import AffectflowSkillLibrary
 
 
 EXCEL_WRITE_LOCK = threading.Lock()
@@ -47,7 +47,7 @@ class ToolOrchestrationService:
             else:
                 workbook = Workbook()
                 sheet = workbook.active
-                sheet.title = "MindBridge Risk Ledger"
+                sheet.title = "Affectflow Risk Ledger"
                 sheet.append(["reportId", "riskLevel", "emotion", "confidence", "summary", "createdAt"])
             sheet.append([report.id, report.risk_level, report.emotion, report.confidence, report.summary, report.created_at.isoformat()])
             workbook.save(path)
@@ -67,7 +67,7 @@ class ToolOrchestrationService:
             status=RiskCaseStatus.OPEN.value,
             owner=self._primary_owner(),
             summary=report.summary,
-            handoff_summary=MindBridgeSkillLibrary.counselor_handoff_summary(report, user),
+            handoff_summary=AffectflowSkillLibrary.counselor_handoff_summary(report, user),
         )
         self.db.add(case)
         self.db.commit()
@@ -215,10 +215,10 @@ class ToolOrchestrationService:
         user = self.db.get(UserAccount, report.user_id)
         username = user.username if user else f"userId={report.user_id}"
         display_name = user.display_name if user else ""
-        handoff = case.handoff_summary if case else MindBridgeSkillLibrary.counselor_handoff_summary(report, user)
+        handoff = case.handoff_summary if case else AffectflowSkillLibrary.counselor_handoff_summary(report, user)
         return "\n".join(
             [
-                "MindBridge 检测到一条高风险心理预警，请尽快安排辅导员或管理员跟进。",
+                "Affectflow 检测到一条高风险心理预警，请尽快安排辅导员或管理员跟进。",
                 "",
                 f"个案ID：{case.id}" if case else "个案ID：未创建",
                 f"报告ID：{report.id}",

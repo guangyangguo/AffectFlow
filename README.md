@@ -1,4 +1,4 @@
-# MindBridge Python
+# Affectflow Python
 
 ## 核心能力
 
@@ -10,7 +10,7 @@
 - 心理风险评估：高风险词典优先、LLM JSON 评估、关键词兜底。
 - 后台报告：记录情绪标签、情绪分数、风险等级、置信度和摘要，但学生端不展示后台评估结果。
 - 数据闭环：咨询/风险消息完整写入 MySQL，短期上下文写入 Redis，高风险消息写入 Excel 台账并通过邮件发送预警。
-- 本地微调模型接入：支持通过 Ollama 加载 `mindbridge-qwen2.5-7b-ft-q4_k_m.gguf`。
+- 本地微调模型接入：支持通过 Ollama 加载 `affectflow-qwen2.5-7b-ft-q4_k_m.gguf`。
 - OpenAI-compatible API 接入：也可切换到云端模型。
 - MCP 工具服务：暴露 Excel 报告写入和风险通知工具，后端高风险后处理通过 MCP client 调用这些工具。
 - RAG 评测：Recall@K、Precision@K、MRR、NDCG@K、HitRate。
@@ -53,7 +53,7 @@ app/
 ├── services/        # AI、聊天、知识库、评估、报告、工具服务
 └── static/          # 原生前端页面
 
-models/mindbridge-qwen2.5-7b-ft/
+models/affectflow-qwen2.5-7b-ft/
 ├── Modelfile        # Ollama 模型定义
 └── README.md        # GGUF 模型放置说明
 
@@ -106,16 +106,16 @@ redis
 系统默认使用 MySQL 保存完整业务数据和完整聊天消息，使用 Redis 保存短期对话记忆。启动服务前先创建数据库：
 
 ```sql
-CREATE DATABASE mindbridge DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
-CREATE USER 'mindbridge'@'%' IDENTIFIED BY 'mindbridge';
-GRANT ALL PRIVILEGES ON mindbridge.* TO 'mindbridge'@'%';
+CREATE DATABASE affectflow DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+CREATE USER 'affectflow'@'%' IDENTIFIED BY 'affectflow';
+GRANT ALL PRIVILEGES ON affectflow.* TO 'affectflow'@'%';
 FLUSH PRIVILEGES;
 ```
 
 `.env` 中配置连接：
 
 ```env
-DATABASE_URL=mysql+pymysql://mindbridge:mindbridge@127.0.0.1:3306/mindbridge?charset=utf8mb4
+DATABASE_URL=mysql+pymysql://affectflow:affectflow@127.0.0.1:3306/affectflow?charset=utf8mb4
 REDIS_URL=redis://127.0.0.1:6379/0
 REDIS_MEMORY_TTL_SECONDS=86400
 REDIS_MEMORY_MAX_MESSAGES=40
@@ -138,7 +138,7 @@ admin / admin123
 
 - `mysql`：MySQL 8.4，容器内端口 `3306`，宿主机映射 `13306`
 - `redis`：Redis 7，容器内端口 `6379`，宿主机映射 `16379`
-- `app`：MindBridge FastAPI 服务，宿主机端口 `8080`
+- `app`：Affectflow FastAPI 服务，宿主机端口 `8080`
 
 默认配置会让应用容器访问宿主机 Ollama：
 
@@ -149,7 +149,7 @@ docker compose up -d --build
 如果 Ollama 已经有下列模型，容器即可使用真实本地聊天模型链路：
 
 ```text
-mindbridge-qwen2.5-7b-ft:latest
+affectflow-qwen2.5-7b-ft:latest
 ```
 
 ## Chroma 向量库与快照
@@ -215,7 +215,7 @@ SMTP_USE_TLS=true
 SMTP_USE_SSL=false
 ALERT_EMAIL_FROM=your-account@example.com
 ALERT_EMAIL_TO=counselor@example.com,admin@example.com
-ALERT_EMAIL_SUBJECT_PREFIX=[MindBridge 高风险预警]
+ALERT_EMAIL_SUBJECT_PREFIX=[Affectflow 高风险预警]
 ```
 
 未配置 SMTP 或收件人时，系统不会中断聊天流程，但会在 `alert_records` 中写入 `FAILED` 记录，提示缺少的配置项。
@@ -225,25 +225,25 @@ ALERT_EMAIL_SUBJECT_PREFIX=[MindBridge 高风险预警]
 Python 版默认预留本地模型名：
 
 ```text
-mindbridge-qwen2.5-7b-ft:latest
+affectflow-qwen2.5-7b-ft:latest
 ```
 
 模型目录：
 
 ```text
-models/mindbridge-qwen2.5-7b-ft/
+models/affectflow-qwen2.5-7b-ft/
 ```
 
 需要放入的 GGUF 权重：
 
 ```text
-models/mindbridge-qwen2.5-7b-ft/mindbridge-qwen2.5-7b-ft-q4_k_m.gguf
+models/affectflow-qwen2.5-7b-ft/affectflow-qwen2.5-7b-ft-q4_k_m.gguf
 ```
 
 如果本机已经有其他位置的 GGUF 模型文件，可以通过 `UPSTREAM_GGUF` 指定路径并建立软链接：
 
 ```bash
-UPSTREAM_GGUF=/path/to/mindbridge-qwen2.5-7b-ft-q4_k_m.gguf ./scripts/create-finetuned-model.sh
+UPSTREAM_GGUF=/path/to/affectflow-qwen2.5-7b-ft-q4_k_m.gguf ./scripts/create-finetuned-model.sh
 ```
 
 创建 Ollama 模型：
@@ -298,7 +298,7 @@ KNOWLEDGE_HYBRID_VECTOR_WEIGHT=0.65
 KNOWLEDGE_HYBRID_BM25_WEIGHT=0.35
 KNOWLEDGE_RERANK_ENABLED=true
 CHROMA_PERSIST_DIR=data/chroma
-CHROMA_COLLECTION_NAME=mindbridge_knowledge
+CHROMA_COLLECTION_NAME=affectflow_knowledge
 ```
 
 当 `KNOWLEDGE_VECTOR_REQUIRED=false` 时，缺少 API key 或 Chroma 不可用不会阻断聊天，系统会回退到本地 BM25 + `hybrid_score` reranker。若交付验收要求必须走 Chroma 向量检索，可设置 `KNOWLEDGE_VECTOR_REQUIRED=true`。
@@ -362,7 +362,7 @@ python -m unittest discover -s tests
 
 ## Agent Runtime Harness
 
-线上对话通过 `MindBridgeAgentHarness` 组织一次 Agent run。Harness 不改变事件驱动 runtime 内部的多 Agent 协作方式，而是在外层统一管理：
+线上对话通过 `AffectflowAgentHarness` 组织一次 Agent run。Harness 不改变事件驱动 runtime 内部的多 Agent 协作方式，而是在外层统一管理：
 
 - 输入脱敏和 session 解析。
 - Agent runtime 调用和多 Agent 协作结果接入。
@@ -377,7 +377,7 @@ python -m unittest discover -s tests
 项目提供一键工程 harness，用 mock AI、临时 SQLite、内存短期记忆和本地输出验证核心链路：
 
 - Risk Safety Harness：高风险识别、报告生成、后台元数据不外显、工具队列入队。
-- Agent Routing Harness：通过 `MindBridgeAgentHarness` 验证 CHAT / CONSULT / RISK 路由和多 Agent 步骤。
+- Agent Routing Harness：通过 `AffectflowAgentHarness` 验证 CHAT / CONSULT / RISK 路由和多 Agent 步骤。
 - Standard Skills Harness：验证 `skills/*/SKILL.md` 标准 Skill 加载、选择逻辑和交接摘要模板渲染。
 - RAG Harness：基于内置评测集验证 Recall@K、MRR、NDCG 和 HitRate。
 - API Harness：健康检查、认证授权、SSE 聊天、管理员知识库接口。
@@ -406,14 +406,14 @@ python -m app.mcp_tools.server
 
 暴露工具：
 
-- `mindbridge_excel_report`
-- `mindbridge_case_create`
-- `mindbridge_alert_send`
-- `mindbridge_alert_ack`
-- `mindbridge_case_note_add`
-- `mindbridge_alert_notify`
+- `affectflow_excel_report`
+- `affectflow_case_create`
+- `affectflow_alert_send`
+- `affectflow_alert_ack`
+- `affectflow_case_note_add`
+- `affectflow_alert_notify`
 
-内置标准 Skills 位于 `skills/*/SKILL.md`，运行时由 `MindBridgeSkillRegistry` 加载：
+内置标准 Skills 位于 `skills/*/SKILL.md`，运行时由 `AffectflowSkillRegistry` 加载：
 
 - `supportive_response_baseline`：心理咨询与风险回复的基础共情、边界和学生端表达规则。
 - `high_risk_safety_plan`：高风险时引导模型优先完成短期安全计划。

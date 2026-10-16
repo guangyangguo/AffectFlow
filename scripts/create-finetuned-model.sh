@@ -2,9 +2,9 @@
 set -euo pipefail
 
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
-MODEL_NAME="${FINETUNED_MODEL_NAME:-mindbridge-qwen2.5-7b-ft:latest}"
-MODEL_DIR="${FINETUNED_MODEL_DIR:-$ROOT_DIR/models/mindbridge-qwen2.5-7b-ft}"
-GGUF_FILE="${FINETUNED_MODEL_FILE:-mindbridge-qwen2.5-7b-ft-q4_k_m.gguf}"
+MODEL_NAME="${FINETUNED_MODEL_NAME:-affectflow-qwen2.5-7b-ft:latest}"
+MODEL_DIR="${FINETUNED_MODEL_DIR:-$ROOT_DIR/models/affectflow-qwen2.5-7b-ft}"
+GGUF_FILE="${FINETUNED_MODEL_FILE:-affectflow-qwen2.5-7b-ft-q4_k_m.gguf}"
 UPSTREAM_GGUF="${UPSTREAM_GGUF:-}"
 
 DEFAULT_OLLAMA_BIN="$(command -v ollama || true)"
@@ -23,7 +23,7 @@ mkdir -p "$MODEL_DIR"
 
 if [ ! -f "$MODEL_DIR/$GGUF_FILE" ]; then
   if [ -n "$UPSTREAM_GGUF" ] && [ -f "$UPSTREAM_GGUF" ]; then
-    echo "Linking GGUF from upstream MindBridge project..."
+    echo "Linking GGUF from upstream Affectflow project..."
     ln -sf "$UPSTREAM_GGUF" "$MODEL_DIR/$GGUF_FILE"
   else
     echo "Missing GGUF model file:"
@@ -37,4 +37,4 @@ fi
 "$OLLAMA_BIN" create "$MODEL_NAME" -f "$MODEL_DIR/Modelfile"
 
 echo "Created $MODEL_NAME"
-echo "Run MindBridge Python with: AI_PROVIDER=ollama ./scripts/run-dev.sh"
+echo "Run Affectflow Python with: AI_PROVIDER=ollama ./scripts/run-dev.sh"

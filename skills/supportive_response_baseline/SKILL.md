@@ -1,6 +1,6 @@
 ---
 name: supportive_response_baseline
-description: Use when MindBridge answers student mental-health consultation or risk messages; provides baseline empathy, scope, and student-facing response rules.
+description: Use when Affectflow answers student mental-health consultation or risk messages; provides baseline empathy, scope, and student-facing response rules.
 ---
 
 # Supportive Response Baseline

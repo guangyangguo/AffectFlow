@@ -13,7 +13,7 @@ COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
 COPY app ./app
-COPY models/mindbridge-qwen2.5-7b-ft/Modelfile ./models/mindbridge-qwen2.5-7b-ft/Modelfile
+COPY models/affectflow-qwen2.5-7b-ft/Modelfile ./models/affectflow-qwen2.5-7b-ft/Modelfile
 
 EXPOSE 8080
 

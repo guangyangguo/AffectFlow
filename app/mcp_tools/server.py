@@ -1,4 +1,4 @@
-"""MindBridge MCP 工具服务端。
+"""Affectflow MCP 工具服务端。
 
 通过 FastMCP 暴露 Excel 报告、风险个案和告警等工具；本地运行时通常由 MCP
 客户端以 stdio 子进程方式启动，并在此处把工具调用转交给业务服务层。
@@ -16,12 +16,12 @@ except Exception as exc:  # pragma: no cover
     raise RuntimeError("请先安装 requirements.txt 中的 mcp 依赖") from exc
 
 
-mcp = FastMCP("mindbridge-python-tools")
+mcp = FastMCP("affectflow-python-tools")
 
 
 @mcp.tool()
-def mindbridge_excel_report(report_id: int) -> str:
-    """Write one psychological risk report into the MindBridge Excel ledger."""
+def affectflow_excel_report(report_id: int) -> str:
+    """Write one psychological risk report into the Affectflow Excel ledger."""
     create_schema()
     db = SessionLocal()
     try:
@@ -35,8 +35,8 @@ def mindbridge_excel_report(report_id: int) -> str:
 
 
 @mcp.tool()
-def mindbridge_case_create(report_id: int) -> str:
-    """Create or return the active MindBridge risk case for one psychological report."""
+def affectflow_case_create(report_id: int) -> str:
+    """Create or return the active Affectflow risk case for one psychological report."""
     create_schema()
     db = SessionLocal()
     try:
@@ -50,8 +50,8 @@ def mindbridge_case_create(report_id: int) -> str:
 
 
 @mcp.tool()
-def mindbridge_alert_send(case_id: int) -> str:
-    """Send or record the counselor alert for one MindBridge risk case."""
+def affectflow_alert_send(case_id: int) -> str:
+    """Send or record the counselor alert for one Affectflow risk case."""
     create_schema()
     db = SessionLocal()
     try:
@@ -67,8 +67,8 @@ def mindbridge_alert_send(case_id: int) -> str:
 
 
 @mcp.tool()
-def mindbridge_alert_ack(case_id: int, actor: str, note: str = "") -> str:
-    """Mark a MindBridge risk case as acknowledged by a counselor or administrator."""
+def affectflow_alert_ack(case_id: int, actor: str, note: str = "") -> str:
+    """Mark a Affectflow risk case as acknowledged by a counselor or administrator."""
     create_schema()
     db = SessionLocal()
     try:
@@ -81,8 +81,8 @@ def mindbridge_alert_ack(case_id: int, actor: str, note: str = "") -> str:
 
 
 @mcp.tool()
-def mindbridge_case_note_add(case_id: int, actor: str, note: str) -> str:
-    """Append a follow-up note to a MindBridge risk case."""
+def affectflow_case_note_add(case_id: int, actor: str, note: str) -> str:
+    """Append a follow-up note to a Affectflow risk case."""
     create_schema()
     db = SessionLocal()
     try:
@@ -95,7 +95,7 @@ def mindbridge_case_note_add(case_id: int, actor: str, note: str) -> str:
 
 
 @mcp.tool()
-def mindbridge_alert_notify(report_id: int) -> str:
+def affectflow_alert_notify(report_id: int) -> str:
     """Send a high-risk alert email and record the notification result for one psychological report."""
     create_schema()
     db = SessionLocal()

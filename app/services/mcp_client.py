@@ -1,4 +1,4 @@
-"""MindBridge 的 MCP 工具客户端。
+"""Affectflow 的 MCP 工具客户端。
 
 负责连接 MCP server、调用 Excel、建案和告警等工具，并把工具调用结果
 转换为应用层可以处理的结果；本地模式通常通过 stdio 启动 server。
@@ -20,7 +20,7 @@ class McpToolError(RuntimeError):
     pass
 
 
-class MindBridgeMcpToolClient:
+class AffectflowMcpToolClient:
     def __init__(self, settings: Settings):
         self.settings = settings
 
@@ -28,17 +28,17 @@ class MindBridgeMcpToolClient:
         try:
             async with self._session() as session:
                 results = [
-                    await self._call_tool(session, "mindbridge_excel_report", {"report_id": report_id}),
+                    await self._call_tool(session, "affectflow_excel_report", {"report_id": report_id}),
                 ]
                 case_id = None
                 if risk_level in {RiskLevel.MEDIUM.value, RiskLevel.HIGH.value}:
-                    case_result = await self._call_tool(session, "mindbridge_case_create", {"report_id": report_id})
+                    case_result = await self._call_tool(session, "affectflow_case_create", {"report_id": report_id})
                     results.append(case_result)
                     case_id = self._extract_case_id(case_result)
                 if risk_level == RiskLevel.HIGH.value:
                     if case_id is None:
                         raise McpToolError("高风险报告已创建，但无法解析 caseId，预警未发送")
-                    results.append(await self._call_tool(session, "mindbridge_alert_send", {"case_id": case_id}))
+                    results.append(await self._call_tool(session, "affectflow_alert_send", {"case_id": case_id}))
                 return results
         except McpToolError:
             raise
@@ -51,7 +51,7 @@ class MindBridgeMcpToolClient:
             from mcp import ClientSession, StdioServerParameters
             from mcp.client.stdio import stdio_client
         except ImportError as exc:
-            raise McpToolError("缺少 mcp 依赖，无法通过 MCP 调用 MindBridge 工具") from exc
+            raise McpToolError("缺少 mcp 依赖，无法通过 MCP 调用 Affectflow 工具") from exc
 
         project_root = self.settings.project_root
         env = os.environ.copy()

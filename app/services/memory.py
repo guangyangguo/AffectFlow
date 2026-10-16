@@ -119,7 +119,7 @@ class RedisShortTermMemoryStore:
         )
 
     def _key(self, session_public_id: str) -> str:
-        return f"mindbridge:short-term-memory:{session_public_id}"
+        return f"affectflow:short-term-memory:{session_public_id}"
 
 
 def compact_history_for_prompt(
@@ -148,7 +148,7 @@ def compact_history_for_prompt(
     summary_message = AiMessage(
         role="system",
         content=(
-            "历史摘要（仅供 MindBridge 内部上下文使用；不要向学生展示；"
+            "历史摘要（仅供 Affectflow 内部上下文使用；不要向学生展示；"
             "不要据此输出诊断、风险等级或后台标签）：\n" + brief
         ),
     )

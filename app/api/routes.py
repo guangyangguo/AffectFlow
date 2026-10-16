@@ -21,7 +21,7 @@ from app.services.chat import ChatService
 from app.services.knowledge import KnowledgeService
 from app.services.model_assets import finetuned_model_status
 from app.services.report import ReportService
-from app.services.skills import MindBridgeSkillLibrary
+from app.services.skills import AffectflowSkillLibrary
 
 router = APIRouter()
 
@@ -81,9 +81,9 @@ def agent_status(user: Annotated[UserAccount, Depends(current_user)]):
             {"name": "ContextAgent", "status": "READY", "description": "独立记忆视图、RAG 检索和 skill 上下文聚合"},
             {"name": "ResponseAgent", "status": "READY", "description": "根据黑板 artifact 发布候选回复方案"},
         ],
-        "skills": MindBridgeSkillLibrary.status_items(),
+        "skills": AffectflowSkillLibrary.status_items(),
         "runtimeHarness": {
-            "name": "MindBridgeAgentHarness",
+            "name": "AffectflowAgentHarness",
             "status": "READY",
             "description": "统一管理单轮 Agent run 的输入脱敏、上下文注入、风险报告、工具计划和 trace 输出",
         },

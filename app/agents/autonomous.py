@@ -1,4 +1,4 @@
-"""定义 MindBridge 的具体 Agent 及其单轮任务行为。
+"""定义 Affectflow 的具体 Agent 及其单轮任务行为。
 
 本文件实现 Understanding、Safety、Context、Response 和 Coordinator Agent，
 以及它们共用的运行时服务、私有记忆和 artifact 构造逻辑；任务调度本身位于
@@ -340,7 +340,7 @@ class ContextAgent(BaseAutonomousAgent):
 
     def act(self, task: AgentTask, board: CollaborationBlackboard) -> AgentTurnResult:
         from app.services.memory import compact_history_for_prompt
-        from app.services.skills import MindBridgeSkillLibrary
+        from app.services.skills import AffectflowSkillLibrary
 
         history = self._load_history()
         compacted_history, deterministic_brief = compact_history_for_prompt(history, self.services.settings, board.model_input)
@@ -355,7 +355,7 @@ class ContextAgent(BaseAutonomousAgent):
         if intent != IntentType.CHAT or risk != RiskLevel.LOW:
             query = self._rewrite_query(memory_brief, board.model_input)
             retrieved = self.services.knowledge.retrieve(query, self.services.settings.knowledge_top_k)
-            skill_context = MindBridgeSkillLibrary.response_skill_context(intent, risk, board.user_input)
+            skill_context = AffectflowSkillLibrary.response_skill_context(intent, risk, board.user_input)
         payload = {
             "memoryBrief": memory_brief,
             "modelHistory": model_history,

@@ -1,4 +1,4 @@
-const AUTH_KEY = "mindbridge.auth";
+const AUTH_KEY = "affectflow.auth";
 
 const els = {
   serviceState: document.querySelector("#serviceState"),

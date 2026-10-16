@@ -1,4 +1,4 @@
-const AUTH_KEY = "mindbridge.auth";
+const AUTH_KEY = "affectflow.auth";
 
 const state = {
   profile: null,
@@ -92,7 +92,7 @@ function isAdmin(profile) {
 }
 
 function displayModel(model) {
-  return (model || "").includes("mindbridge-qwen2.5-7b-ft") ? "微调 Qwen2.5-7B" : model;
+  return (model || "").includes("affectflow-qwen2.5-7b-ft") ? "微调 Qwen2.5-7B" : model;
 }
 
 function displayTime(value) {
@@ -121,7 +121,7 @@ function statusLabel(status) {
 function roleLabel(role) {
   const value = (role || "").toUpperCase();
   if (value === "USER") return "学生";
-  if (value === "ASSISTANT") return "MindBridge";
+  if (value === "ASSISTANT") return "Affectflow";
   if (value === "SYSTEM") return "系统";
   return role || "未知角色";
 }

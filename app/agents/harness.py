@@ -21,7 +21,7 @@ from app.models.entities import ChatMessage, ChatSession, PsychologicalReport, U
 from app.schemas.dtos import AiMessage, ChatRequest
 from app.services.assessment import PsychologyAssessment
 from app.services.knowledge import SearchResult
-from app.services.mcp_client import MindBridgeMcpToolClient
+from app.services.mcp_client import AffectflowMcpToolClient
 from app.services.memory import RedisShortTermMemoryStore
 from app.services.privacy import PrivacySanitizer
 from app.services.tool_queue import ToolQueueService
@@ -54,8 +54,8 @@ class AgentHarnessOutcome:
     trace_id: int | None
 
 
-class MindBridgeAgentHarness:
-    """Runtime harness for one MindBridge agent turn.
+class AffectflowAgentHarness:
+    """Runtime harness for one Affectflow agent turn.
 
     The harness owns business orchestration around the agent runtime. HTTP/SSE
     code can stay thin while this class manages input preparation, persistence,
@@ -122,7 +122,7 @@ class MindBridgeAgentHarness:
         if self.settings.tool_queue_enabled:
             ToolQueueService(self.db, self.settings).enqueue_report(tool_plan.report_id, tool_plan.risk_level)
             return ["queued"]
-        return await MindBridgeMcpToolClient(self.settings).handle_report(tool_plan.report_id, tool_plan.risk_level)
+        return await AffectflowMcpToolClient(self.settings).handle_report(tool_plan.report_id, tool_plan.risk_level)
 
     def save_message(self, user: UserAccount, session: ChatSession, role: MessageRole, content: str) -> None:
         self.db.add(ChatMessage(user_id=user.id, session_id=session.id, role=role.value, content=content))

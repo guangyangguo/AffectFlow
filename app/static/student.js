@@ -1,4 +1,4 @@
-const AUTH_KEY = "mindbridge.auth";
+const AUTH_KEY = "affectflow.auth";
 
 const state = {
   sessionId: null,
@@ -63,7 +63,7 @@ function isAdmin(profile) {
 }
 
 function displayModel(model) {
-  return (model || "").includes("mindbridge-qwen2.5-7b-ft") ? "微调 Qwen2.5-7B" : model;
+  return (model || "").includes("affectflow-qwen2.5-7b-ft") ? "微调 Qwen2.5-7B" : model;
 }
 
 function studentDisplayName(profile) {
@@ -134,7 +134,7 @@ function addMessage(role, content) {
   const row = document.createElement("article");
   row.className = `message ${role}`;
   row.innerHTML = `
-    <div class="message-role">${role === "user" ? "我" : "MindBridge"}</div>
+    <div class="message-role">${role === "user" ? "我" : "Affectflow"}</div>
     <div class="bubble"></div>
   `;
   row.querySelector(".bubble").textContent = content;

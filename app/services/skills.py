@@ -25,7 +25,7 @@ class SkillValidationIssue:
 
 
 @dataclass(frozen=True)
-class MindBridgeSkill:
+class AffectflowSkill:
     name: str
     description: str
     body: str
@@ -48,11 +48,11 @@ class MindBridgeSkill:
         return issues
 
 
-class MindBridgeSkillRegistry:
+class AffectflowSkillRegistry:
     def __init__(self, root: Path | None = None):
         self.root = root or Path(__file__).resolve().parents[2] / "skills"
 
-    def list_skills(self) -> list[MindBridgeSkill]:
+    def list_skills(self) -> list[AffectflowSkill]:
         if not self.root.exists():
             return []
         skills = []
@@ -92,7 +92,7 @@ class MindBridgeSkillRegistry:
             )
         return items
 
-    def get_required(self, name: str) -> MindBridgeSkill:
+    def get_required(self, name: str) -> AffectflowSkill:
         for skill in self.list_skills():
             if skill.name == name:
                 return skill
@@ -105,7 +105,7 @@ class MindBridgeSkillRegistry:
             raise SkillLoadError(f"standard skill {name} does not define a text template")
         return match.group("template").strip()
 
-    def _load_skill_file(self, path: Path) -> MindBridgeSkill:
+    def _load_skill_file(self, path: Path) -> AffectflowSkill:
         text = path.read_text(encoding="utf-8")
         metadata, body = _split_frontmatter(text, path)
         name = metadata.get("name") or path.parent.name
@@ -116,26 +116,26 @@ class MindBridgeSkillRegistry:
             raise SkillLoadError(f"{path} is missing frontmatter description")
         if not body.strip():
             raise SkillLoadError(f"{path} is missing skill body")
-        return MindBridgeSkill(name=name.strip(), description=description.strip(), body=body.strip(), path=path, metadata=metadata)
+        return AffectflowSkill(name=name.strip(), description=description.strip(), body=body.strip(), path=path, metadata=metadata)
 
 
-class MindBridgeSkillLibrary:
+class AffectflowSkillLibrary:
     @staticmethod
-    def registry() -> MindBridgeSkillRegistry:
-        return MindBridgeSkillRegistry()
+    def registry() -> AffectflowSkillRegistry:
+        return AffectflowSkillRegistry()
 
     @staticmethod
-    def list_skills() -> list[MindBridgeSkill]:
-        return MindBridgeSkillLibrary.registry().list_skills()
+    def list_skills() -> list[AffectflowSkill]:
+        return AffectflowSkillLibrary.registry().list_skills()
 
     @staticmethod
     def status_items() -> list[dict]:
-        return MindBridgeSkillLibrary.registry().status_items()
+        return AffectflowSkillLibrary.registry().status_items()
 
     @staticmethod
     def response_skill_context(intent: IntentType, risk: RiskLevel, text: str) -> str:
-        names = MindBridgeSkillLibrary.response_skill_names(intent, risk, text)
-        registry = MindBridgeSkillLibrary.registry()
+        names = AffectflowSkillLibrary.response_skill_names(intent, risk, text)
+        registry = AffectflowSkillLibrary.registry()
         return "\n\n".join(registry.get_required(name).prompt_context() for name in names)
 
     @staticmethod
@@ -158,11 +158,11 @@ class MindBridgeSkillLibrary:
 
     @staticmethod
     def high_risk_safety_plan_prompt() -> str:
-        return MindBridgeSkillLibrary.registry().get_required("high_risk_safety_plan").prompt_context()
+        return AffectflowSkillLibrary.registry().get_required("high_risk_safety_plan").prompt_context()
 
     @staticmethod
     def counselor_handoff_summary(report: PsychologicalReport, user: UserAccount | None) -> str:
-        template = MindBridgeSkillLibrary.registry().template_for("counselor_handoff_summary")
+        template = AffectflowSkillLibrary.registry().template_for("counselor_handoff_summary")
         student = _student_label(user, report.user_id)
         urgency = "立即跟进" if report.risk_level == RiskLevel.HIGH.value else "尽快跟进"
         next_steps = [

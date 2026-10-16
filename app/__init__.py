@@ -1,1 +1,1 @@
-"""MindBridge Python 应用包。"""
+"""Affectflow Python 应用包。"""

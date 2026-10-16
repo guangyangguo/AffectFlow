@@ -1,10 +1,10 @@
-"""MindBridge FastAPI 应用入口。
+"""Affectflow FastAPI 应用入口。
 
 创建并配置 FastAPI 应用、注册 API 路由、挂载前端静态资源，并在应用生命周期
 中初始化数据库和工具队列 worker。
 
 项目启动命令（在项目根目录执行）：
-    conda activate mindbridge
+    conda activate affectflow
     python -m uvicorn app.main:app --host 127.0.0.1 --port 8080
 """
 
@@ -21,7 +21,7 @@ from app.services.tool_queue import get_tool_queue_worker
 
 
 def create_app() -> FastAPI:
-    app = FastAPI(title="MindBridge Python", version="0.1.0")
+    app = FastAPI(title="Affectflow Python", version="0.1.0")
 
     @app.middleware("http")
     async def no_cache_frontend_assets(request, call_next):

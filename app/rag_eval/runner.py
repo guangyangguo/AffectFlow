@@ -4,7 +4,7 @@
 Recall@K、Precision@K、MRR 和 NDCG 等指标后输出评测报告。
 
 评测命令（在项目根目录执行）：
-    conda activate mindbridge
+    conda activate affectflow
     python -m app.rag_eval.runner
 """
 
